@@ -25,27 +25,27 @@ public class TopicsTest {
     }
 
     @Test
-    public void listTopics() throws Exception {
+    public void getTopics() throws Exception {
         try (Clients clients = newClients();) {
             Topics topics = new Topics(clients);
-            Set<String> listed = topics.list();
-            System.out.println(listed);
-            Assert.assertNotNull(listed);
-            Assert.assertTrue(!listed.isEmpty());
-            Assert.assertTrue(listed.contains(Topics.INTERNAL_CONSUMER_OFFSETS));
+            Set<String> all = topics.getAll();
+            System.out.println(all);
+            Assert.assertNotNull(all);
+            Assert.assertTrue(!all.isEmpty());
+            Assert.assertTrue(all.contains(Topics.INTERNAL_CONSUMER_OFFSETS));
 
-            listed = topics.list(false);
-            System.out.println(listed);
-            Assert.assertTrue(!listed.contains(Topics.INTERNAL_CONSUMER_OFFSETS));
+            all = topics.getAllWithoutInternal();
+            System.out.println(all);
+            Assert.assertTrue(!all.contains(Topics.INTERNAL_CONSUMER_OFFSETS));
         }
     }
 
     @Test
-    public void listTopicsOfBroker() throws Exception {
+    public void getOfBroker() throws Exception {
         try (Clients clients = newClients()) {
             Topics topics = new Topics(clients);
             int brokerId = 2;
-            Set<String> replicas = topics.list(brokerId);
+            Set<String> replicas = topics.getOfBroker(brokerId);
             System.out.println(replicas);
         }
     }
