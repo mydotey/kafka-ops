@@ -1,53 +1,33 @@
 package org.mydotey.tool.kafka;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author koqizhao
  *
  * Dec 7, 2018
  */
-public class TopicsTest {
-
-    protected Clients newClients() throws IOException {
-        Properties properties = new Properties();
-        try (InputStream is = TopicsTest.class.getResourceAsStream("/local-kafka.properties")) {
-            properties.load(is);
-        }
-
-        return new Clients(properties);
-    }
+public class TopicsTest extends KafkaTest {
 
     @Test
     public void getTopics() throws Exception {
-        try (Clients clients = newClients();) {
-            Topics topics = new Topics(clients);
-            Set<String> all = topics.getAll();
-            System.out.println(all);
-            Assert.assertNotNull(all);
-            Assert.assertTrue(!all.isEmpty());
-            Assert.assertTrue(all.contains(Topics.INTERNAL_CONSUMER_OFFSETS));
+        Topics topics = new Topics(getClients());
+        Set<String> all = topics.getAll();
+        System.out.println(all);
+        Assert.assertEquals(ALL_TOPICS, all);
 
-            all = topics.getAllWithoutInternal();
-            System.out.println(all);
-            Assert.assertTrue(!all.contains(Topics.INTERNAL_CONSUMER_OFFSETS));
-        }
-    }
+        all = topics.getAllWithoutInternal();
+        System.out.println(all);
+        Assert.assertEquals(ImmutableSet.of(TOPIC, TOPIC_2), all);
 
-    @Test
-    public void getOfBroker() throws Exception {
-        try (Clients clients = newClients()) {
-            Topics topics = new Topics(clients);
-            int brokerId = 2;
-            Set<String> replicas = topics.getOfBroker(brokerId);
-            System.out.println(replicas);
-        }
+        all = topics.getAllInternal();
+        System.out.println(all);
+        Assert.assertEquals(ImmutableSet.of(Topics.CONSUMER_OFFSETS), all);
     }
 
 }
