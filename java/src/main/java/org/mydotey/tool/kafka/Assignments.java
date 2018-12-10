@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionReplica;
 import org.mydotey.scala.converter.ScalaConverters;
 
 import kafka.admin.ReassignPartitionsCommand;
@@ -14,6 +15,7 @@ import kafka.admin.ReassignPartitionsCommand.Throttle;
 import kafka.admin.ReassignmentStatus;
 import kafka.utils.Json;
 import scala.Option;
+import scala.Tuple2;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 
@@ -120,6 +122,19 @@ public class Assignments {
             });
         });
         return Json.encodeAsString(jsonMap);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public Map<String, Map<Integer, List<Integer>>> fromJson(String json) {
+        Map<String, Map<Integer, List<Integer>>> assignments = new HashMap<>();
+        Tuple2<Seq<Tuple2<TopicPartition, Seq<Object>>>, scala.collection.Map<TopicPartitionReplica, String>> parsed = ReassignPartitionsCommand
+                .parsePartitionReassignmentData(json);
+        JavaConverters.seqAsJavaListConverter(parsed._1()).asJava().forEach(t -> {
+            Map<Integer, List<Integer>> topicAssignments = assignments.computeIfAbsent(t._1().topic(),
+                    k -> new HashMap<>());
+            topicAssignments.put(t._1().partition(), (List) JavaConverters.seqAsJavaListConverter(t._2()).asJava());
+        });
+        return assignments;
     }
 
 }

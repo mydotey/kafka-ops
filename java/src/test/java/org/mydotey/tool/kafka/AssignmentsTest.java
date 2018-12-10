@@ -1,11 +1,16 @@
 package org.mydotey.tool.kafka;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mydotey.tool.kafka.Assignments.Status;
+import org.mydotey.tool.kafka.util.Util;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -48,6 +53,15 @@ public class AssignmentsTest extends KafkaTest {
         Assignments assignments = new Assignments(getClients());
         String jsonString = assignments.toJson(ALL_ASSIGNMENTS);
         System.out.println(jsonString);
+    }
+
+    @Test
+    public void fromJson() throws IOException, URISyntaxException {
+        Assignments assignments = new Assignments(getClients());
+        URI testFile = new URI(AssignmentsTest.class.getResource("/assignments.json").toString());
+        String jsonString = Util.readFileContent(Paths.get(testFile));
+        Map<String, Map<Integer, List<Integer>>> assignmentsMap = assignments.fromJson(jsonString);
+        System.out.println(assignmentsMap);
     }
 
     @Test

@@ -45,6 +45,7 @@
         <scf-bom.version>1.5.3</scf-bom.version>
         <guava.version>19.0</guava.version>
         <kafka.version>2.0.0</kafka.version>
+        <argparse4j.version>0.8.1</argparse4j.version>
         <junit.version>4.12</junit.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
@@ -81,6 +82,11 @@
                 <version>${kafka.version}</version>
             </dependency>
             <dependency>
+                <groupId>net.sourceforge.argparse4j</groupId>
+                <artifactId>argparse4j</artifactId>
+                <version>${argparse4j.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
@@ -105,6 +111,10 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.argparse4j</groupId>
+            <artifactId>argparse4j</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

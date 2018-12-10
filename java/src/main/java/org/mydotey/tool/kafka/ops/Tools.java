@@ -8,6 +8,7 @@ public class Tools {
 
     static {
         _tools.put(BrokerDataTransfer.class, "transfer data from 1 broker to another");
+        _tools.put(ReassignmentStatusPrinter.class, "show reassignment status");
     }
 
     public static void main(String[] args) {
