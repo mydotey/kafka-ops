@@ -29,6 +29,7 @@ public class BrokerDataTransfer {
     private static final String KEY_TO = "to";
     private static final String KEY_ACTION = "action";
     private static final String KEY_FILE = "file";
+    private static final String KEY_INTER_BROKER_LIMIT = "inter-broker-limit";
     private static final String KEY_TOPICS = "topics";
 
     private static final String ACTION_GENERATE = "generate";
@@ -45,6 +46,8 @@ public class BrokerDataTransfer {
         _argumentParser.addArgument("-a", "--" + KEY_ACTION).choices(ACTION_GENERATE, ACTION_EXECUTE)
                 .setDefault(ACTION_GENERATE);
         _argumentParser.addArgument("--" + KEY_FILE).setDefault("assignments.json");
+        _argumentParser.addArgument("-ibl", "--" + KEY_INTER_BROKER_LIMIT).type(Long.class).dest(KEY_INTER_BROKER_LIMIT)
+                .setDefault(Assignments.DEFAULT_REASSIGN_THROTTLE_LIMIT);
         _argumentParser.addArgument(KEY_TOPICS).nargs("*");
     }
 
@@ -59,10 +62,13 @@ public class BrokerDataTransfer {
         int to = ns.getInt(KEY_TO);
         String action = ns.get(KEY_ACTION);
         String file = ns.get(KEY_FILE);
+        long interBrokerLimit = ns.get(KEY_INTER_BROKER_LIMIT);
         Set<String> topics = ns.getList(KEY_TOPICS) == null ? null : Sets.newHashSet(ns.getList(KEY_TOPICS));
-        System.out.printf("arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n",
+        System.out.printf(
+                "arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n",
                 Clients.KEY_BOOTSTRAP_SERVERS, bootstrapServers, Clients.KEY_ZK_CONNECT, zkConnect, KEY_FROM, from,
-                KEY_TO, to, KEY_ACTION, action, KEY_FILE, file, KEY_TOPICS, topics);
+                KEY_TO, to, KEY_ACTION, action, KEY_FILE, file, KEY_INTER_BROKER_LIMIT, interBrokerLimit, KEY_TOPICS,
+                topics);
 
         try (Clients clients = new Clients(properties)) {
             Brokers brokers = new Brokers(clients);
@@ -87,7 +93,8 @@ public class BrokerDataTransfer {
 
             switch (action) {
                 case ACTION_EXECUTE:
-                    assignments.reassign(newAssignmentsMap);
+                    assignments.reassign(newAssignmentsMap, interBrokerLimit,
+                            Assignments.DEFAULT_REASSIGN_THROTTLE_LIMIT, Assignments.DEFAULT_REASSIGN_TIMEOUT);
                     System.out.println();
                     break;
                 default:

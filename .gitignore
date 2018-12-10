@@ -27,3 +27,5 @@ bin/
 *.rar
 hs_err_pid*
 
+java/assignments.new.json
+java/assignments.old.json
