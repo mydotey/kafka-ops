@@ -10,8 +10,9 @@ public class Tools {
     private static HashMap<Class<?>, String> _tools = new HashMap<>();
 
     static {
-        _tools.put(BrokerDataTransfer.class, "transfer data from 1 broker to another");
         _tools.put(ReassignmentStatusPrinter.class, "show reassignment status");
+        _tools.put(BrokerDataTransfer.class, "transfer data from 1 broker to another");
+        _tools.put(TopicPartitionTransfer.class, "transfer topic partitions from 1 broker to another");
     }
 
     public static void main(String[] args) throws Exception {
