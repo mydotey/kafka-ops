@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableSet;
+
 import kafka.cluster.Broker;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
@@ -54,9 +56,37 @@ public class Brokers {
         return results;
     }
 
+    public Map<String, Map<Integer, List<Integer>>> getAssignments(int broker, String topic, Set<Integer> partitions) {
+        Map<String, Map<Integer, List<Integer>>> assignments = new Assignments(_clients)
+                .getOfTopics(ImmutableSet.of(topic));
+        Map<String, Map<Integer, List<Integer>>> results = new HashMap<>();
+        assignments.forEach((t, a) -> {
+            a.forEach((p, bl) -> {
+                if (bl.contains(broker) && partitions.contains(p)) {
+                    Map<Integer, List<Integer>> topicAssignments = results.computeIfAbsent(t, k -> new HashMap<>());
+                    topicAssignments.put(p, bl);
+                }
+            });
+        });
+        return results;
+    }
+
     public Map<String, Map<Integer, List<Integer>>> generateAssignmentsForTransfer(int from, int to,
             Set<String> topics) {
         Map<String, Map<Integer, List<Integer>>> assignments = getAssignments(from, topics);
+        changeAssignmentsForTransfer(from, to, assignments);
+        return assignments;
+    }
+
+    public Map<String, Map<Integer, List<Integer>>> generateAssignmentsForTransfer(int from, int to, String topic,
+            Set<Integer> partitions) {
+        Map<String, Map<Integer, List<Integer>>> assignments = getAssignments(from, topic, partitions);
+        changeAssignmentsForTransfer(from, to, assignments);
+        return assignments;
+    }
+
+    protected void changeAssignmentsForTransfer(int from, int to,
+            Map<String, Map<Integer, List<Integer>>> assignments) {
         assignments.forEach((t, a) -> {
             a.forEach((p, bl) -> {
                 if (bl.contains(to)) {
@@ -68,8 +98,6 @@ public class Brokers {
                 bl.replaceAll(b -> b == from ? to : b);
             });
         });
-
-        return assignments;
     }
 
 }

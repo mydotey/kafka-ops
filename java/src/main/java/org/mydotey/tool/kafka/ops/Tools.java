@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import net.sourceforge.argparse4j.helper.HelpScreenException;
-
 public class Tools {
 
     private static HashMap<Class<?>, String> _tools = new HashMap<>();
@@ -36,11 +34,7 @@ public class Tools {
         try {
             mainMethod.invoke(null, new Object[] { Arrays.copyOfRange(args, 1, args.length) });
         } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof HelpScreenException)
-                return;
-
-            cause.printStackTrace();
+            e.getCause().printStackTrace();
         }
     }
 

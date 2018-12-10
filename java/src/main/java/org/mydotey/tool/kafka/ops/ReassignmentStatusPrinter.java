@@ -10,6 +10,7 @@ import org.mydotey.tool.kafka.Clients;
 import org.mydotey.tool.kafka.util.Util;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.helper.HelpScreenException;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.Namespace;
 
@@ -32,7 +33,13 @@ public class ReassignmentStatusPrinter {
     }
 
     public static void main(String[] args) throws Exception {
-        Namespace ns = _argumentParser.parseArgs(args);
+        Namespace ns;
+        try {
+            ns = _argumentParser.parseArgs(args);
+        } catch (HelpScreenException e) {
+            return;
+        }
+
         Properties properties = new Properties();
         String bootstrapServers = ns.get(Clients.KEY_BOOTSTRAP_SERVERS);
         properties.put(Clients.KEY_BOOTSTRAP_SERVERS, bootstrapServers);

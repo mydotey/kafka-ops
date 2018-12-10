@@ -55,6 +55,16 @@ public class BrokersTest extends KafkaTest {
                 ImmutableList.of(BROKER_3, BROKER), 3, ImmutableList.of(BROKER, BROKER_3)));
         actual = brokers.getAssignments(BROKER_3, ImmutableSet.of(TOPIC_2));
         Assert.assertEquals(expected, actual);
+
+        expected = ImmutableMap.of(TOPIC,
+                ImmutableMap.of(1, ImmutableList.of(BROKER_2), 3, ImmutableList.of(BROKER_2)));
+        actual = brokers.getAssignments(BROKER_2, TOPIC, ImmutableSet.of(1, 3));
+        Assert.assertEquals(expected, actual);
+
+        expected = ImmutableMap.of(TOPIC_2,
+                ImmutableMap.of(1, ImmutableList.of(BROKER_2, BROKER_3), 2, ImmutableList.of(BROKER_3, BROKER)));
+        actual = brokers.getAssignments(BROKER_3, TOPIC_2, ImmutableSet.of(1, 2));
+        Assert.assertEquals(expected, actual);
     }
 
     @Test

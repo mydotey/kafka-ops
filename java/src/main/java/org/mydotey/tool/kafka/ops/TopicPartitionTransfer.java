@@ -2,6 +2,7 @@ package org.mydotey.tool.kafka.ops;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -11,7 +12,6 @@ import org.mydotey.tool.kafka.Assignments;
 import org.mydotey.tool.kafka.Brokers;
 import org.mydotey.tool.kafka.Clients;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -24,7 +24,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
  *
  * Dec 10, 2018
  */
-public class BrokerDataTransfer {
+public class TopicPartitionTransfer {
 
     private static final String KEY_FROM = "from";
     private static final String KEY_TO = "to";
@@ -32,11 +32,12 @@ public class BrokerDataTransfer {
     private static final String KEY_FILE = "file";
     private static final String KEY_INTER_BROKER_LIMIT = "inter-broker-limit";
     private static final String KEY_TOPIC = "topic";
+    private static final String KEY_PARTITION = "partition";
 
     private static final String ACTION_GENERATE = "generate";
     private static final String ACTION_EXECUTE = "execute";
 
-    private static ArgumentParser _argumentParser = ArgumentParsers.newFor(BrokerDataTransfer.class.getSimpleName())
+    private static ArgumentParser _argumentParser = ArgumentParsers.newFor(TopicPartitionTransfer.class.getSimpleName())
             .build();
 
     static {
@@ -49,7 +50,8 @@ public class BrokerDataTransfer {
         _argumentParser.addArgument("--" + KEY_FILE).setDefault("assignments.json");
         _argumentParser.addArgument("-ibl", "--" + KEY_INTER_BROKER_LIMIT).type(Long.class).dest(KEY_INTER_BROKER_LIMIT)
                 .setDefault(Assignments.DEFAULT_REASSIGN_THROTTLE_LIMIT);
-        _argumentParser.addArgument(KEY_TOPIC).nargs("*");
+        _argumentParser.addArgument("--" + KEY_TOPIC).required(true);
+        _argumentParser.addArgument(KEY_PARTITION).type(Integer.class).nargs("*").required(true);
     }
 
     public static void main(String[] args) throws Exception {
@@ -70,22 +72,21 @@ public class BrokerDataTransfer {
         String action = ns.get(KEY_ACTION);
         String file = ns.get(KEY_FILE);
         long interBrokerLimit = ns.get(KEY_INTER_BROKER_LIMIT);
-        Set<String> topics = ns.getList(KEY_TOPIC) == null ? null : Sets.newHashSet(ns.getList(KEY_TOPIC));
+        String topic = ns.get(KEY_TOPIC);
+        Set<Integer> partitions = new HashSet<>(ns.getList(KEY_PARTITION));
         System.out.printf(
-                "arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n",
+                "arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n",
                 Clients.KEY_BOOTSTRAP_SERVERS, bootstrapServers, Clients.KEY_ZK_CONNECT, zkConnect, KEY_FROM, from,
                 KEY_TO, to, KEY_ACTION, action, KEY_FILE, file, KEY_INTER_BROKER_LIMIT, interBrokerLimit, KEY_TOPIC,
-                topics);
+                topic, KEY_PARTITION, partitions);
 
         try (Clients clients = new Clients(properties)) {
             Brokers brokers = new Brokers(clients);
             Assignments assignments = new Assignments(clients);
-            if (topics == null || topics.isEmpty())
-                topics = brokers.getTopics(from);
-
-            Map<String, Map<Integer, List<Integer>>> currentAssignmentsMap = brokers.getAssignments(from, topics);
+            Map<String, Map<Integer, List<Integer>>> currentAssignmentsMap = brokers.getAssignments(from, topic,
+                    partitions);
             Map<String, Map<Integer, List<Integer>>> newAssignmentsMap = brokers.generateAssignmentsForTransfer(from,
-                    to, topics);
+                    to, topic, partitions);
             String currentAssignmentsJson = assignments.toJson(currentAssignmentsMap);
             String newAssignmentsJson = assignments.toJson(newAssignmentsMap);
             System.out.printf("\ncurrent assignments: \n%s\n\nnew assignments:\n%s\n\n", currentAssignmentsJson,
