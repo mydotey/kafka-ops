@@ -30,7 +30,7 @@ public class BrokerDataTransfer {
     private static final String KEY_ACTION = "action";
     private static final String KEY_FILE = "file";
     private static final String KEY_INTER_BROKER_LIMIT = "inter-broker-limit";
-    private static final String KEY_TOPICS = "topics";
+    private static final String KEY_TOPIC = "topic";
 
     private static final String ACTION_GENERATE = "generate";
     private static final String ACTION_EXECUTE = "execute";
@@ -48,7 +48,7 @@ public class BrokerDataTransfer {
         _argumentParser.addArgument("--" + KEY_FILE).setDefault("assignments.json");
         _argumentParser.addArgument("-ibl", "--" + KEY_INTER_BROKER_LIMIT).type(Long.class).dest(KEY_INTER_BROKER_LIMIT)
                 .setDefault(Assignments.DEFAULT_REASSIGN_THROTTLE_LIMIT);
-        _argumentParser.addArgument(KEY_TOPICS).nargs("*");
+        _argumentParser.addArgument(KEY_TOPIC).nargs("*");
     }
 
     public static void main(String[] args) throws Exception {
@@ -63,11 +63,11 @@ public class BrokerDataTransfer {
         String action = ns.get(KEY_ACTION);
         String file = ns.get(KEY_FILE);
         long interBrokerLimit = ns.get(KEY_INTER_BROKER_LIMIT);
-        Set<String> topics = ns.getList(KEY_TOPICS) == null ? null : Sets.newHashSet(ns.getList(KEY_TOPICS));
+        Set<String> topics = ns.getList(KEY_TOPIC) == null ? null : Sets.newHashSet(ns.getList(KEY_TOPIC));
         System.out.printf(
                 "arguments:\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\t%s: %s\n\n",
                 Clients.KEY_BOOTSTRAP_SERVERS, bootstrapServers, Clients.KEY_ZK_CONNECT, zkConnect, KEY_FROM, from,
-                KEY_TO, to, KEY_ACTION, action, KEY_FILE, file, KEY_INTER_BROKER_LIMIT, interBrokerLimit, KEY_TOPICS,
+                KEY_TO, to, KEY_ACTION, action, KEY_FILE, file, KEY_INTER_BROKER_LIMIT, interBrokerLimit, KEY_TOPIC,
                 topics);
 
         try (Clients clients = new Clients(properties)) {
