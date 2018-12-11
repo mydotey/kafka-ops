@@ -9,11 +9,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mydotey.java.io.file.FileExtension;
 import org.mydotey.tool.kafka.ops.Assignments;
 import org.mydotey.tool.kafka.ops.Brokers;
 import org.mydotey.tool.kafka.ops.Topics;
 import org.mydotey.tool.kafka.ops.Assignments.Status;
-import org.mydotey.util.FileUtil;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -62,7 +62,7 @@ public class AssignmentsTest extends KafkaTest {
     public void fromJson() throws IOException, URISyntaxException {
         Assignments assignments = new Assignments(getClients());
         URI testFile = new URI(AssignmentsTest.class.getResource("/assignments.json").toString());
-        String jsonString = FileUtil.readFileContent(Paths.get(testFile));
+        String jsonString = FileExtension.readFileContent(Paths.get(testFile));
         Map<String, Map<Integer, List<Integer>>> assignmentsMap = assignments.fromJson(jsonString);
         System.out.println(assignmentsMap);
     }
