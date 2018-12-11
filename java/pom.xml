@@ -5,10 +5,10 @@
 
     <groupId>org.mydotey.tool</groupId>
     <artifactId>kafka-ops</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
     <name>kafka-ops</name>
-    <description>kafka ops tool</description>
+    <description>kafka ops lib</description>
     <url>https://github.com/mydotey/kafka-ops</url>
 
     <licenses>

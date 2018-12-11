@@ -1,4 +1,4 @@
-package org.mydotey.tool.kafka.util;
+package org.mydotey.util;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -11,7 +11,7 @@ import java.nio.file.Path;
  *
  * Dec 10, 2018
  */
-public interface Util {
+public interface FileUtil {
 
     static String readFileContent(Path file) throws IOException {
         return readFileContent(file, StandardCharsets.UTF_8);

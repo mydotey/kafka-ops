@@ -1,4 +1,4 @@
-package org.mydotey.tool.kafka;
+package org.mydotey.tool.kafka.ops;
 
 import java.util.HashMap;
 import java.util.List;

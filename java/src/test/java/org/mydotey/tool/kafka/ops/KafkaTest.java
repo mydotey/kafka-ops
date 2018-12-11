@@ -1,4 +1,4 @@
-package org.mydotey.tool.kafka;
+package org.mydotey.tool.kafka.ops;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.mydotey.tool.kafka.ops.Clients;
+import org.mydotey.tool.kafka.ops.Topics;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

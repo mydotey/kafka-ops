@@ -1,4 +1,4 @@
-package org.mydotey.scala.converter;
+package org.mydotey.scala;
 
 import java.util.function.Supplier;
 

@@ -1,4 +1,4 @@
-package org.mydotey.tool.kafka;
+package org.mydotey.tool.kafka.ops;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
-import org.mydotey.scala.converter.ScalaConverters;
+import org.mydotey.scala.ScalaConverters;
 
 import kafka.admin.ReassignPartitionsCommand;
 import kafka.admin.ReassignPartitionsCommand.Throttle;

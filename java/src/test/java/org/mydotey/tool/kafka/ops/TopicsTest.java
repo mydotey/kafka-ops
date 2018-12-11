@@ -1,9 +1,10 @@
-package org.mydotey.tool.kafka;
+package org.mydotey.tool.kafka.ops;
 
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mydotey.tool.kafka.ops.Topics;
 
 import com.google.common.collect.ImmutableSet;
 
