@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -73,12 +74,12 @@ public class AssignmentsTest extends KafkaTest {
         Assignments assignments = new Assignments(getClients());
         try {
             Map<String, Map<Integer, List<Integer>>> assignmentsMap = brokers.generateAssignmentsForTransfer(BROKER_2,
-                    BROKER_3, ImmutableSet.of(TOPIC));
+                    Arrays.asList(BROKER_3), ImmutableSet.of(TOPIC));
             assignments.reassign(assignmentsMap);
             ensureReassignmentComplete(assignments, assignmentsMap);
         } finally {
             Map<String, Map<Integer, List<Integer>>> assignmentsMap = brokers.generateAssignmentsForTransfer(BROKER_3,
-                    BROKER_2, ImmutableSet.of(TOPIC));
+                    Arrays.asList(BROKER_2), ImmutableSet.of(TOPIC));
             assignments.reassign(assignmentsMap);
             ensureReassignmentComplete(assignments, assignmentsMap);
         }

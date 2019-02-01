@@ -5,7 +5,7 @@
 
     <groupId>org.mydotey.tool</groupId>
     <artifactId>kafka-ops</artifactId>
-    <version>0.2.2</version>
+    <version>0.3.0</version>
     <packaging>jar</packaging>
     <name>kafka-ops</name>
     <description>kafka ops lib</description>
@@ -44,7 +44,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <lang-extension.version>1.1.0</lang-extension.version>
         <guava.version>19.0</guava.version>
-        <kafka.version>2.0.0</kafka.version>
+        <kafka.version>2.0.1</kafka.version>
         <junit.version>4.12</junit.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>

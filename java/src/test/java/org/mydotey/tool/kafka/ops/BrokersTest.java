@@ -1,5 +1,6 @@
 package org.mydotey.tool.kafka.ops;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,8 +76,8 @@ public class BrokersTest extends KafkaTest {
         Map<String, Map<Integer, List<Integer>>> expected = ImmutableMap.of(TOPIC,
                 ImmutableMap.of(1, ImmutableList.of(BROKER_3), 3, ImmutableList.of(BROKER_3), 5,
                         ImmutableList.of(BROKER_3), 7, ImmutableList.of(BROKER_3), 9, ImmutableList.of(BROKER_3)));
-        Map<String, Map<Integer, List<Integer>>> actual = brokers.generateAssignmentsForTransfer(BROKER_2, BROKER_3,
-                ImmutableSet.of(TOPIC));
+        Map<String, Map<Integer, List<Integer>>> actual = brokers.generateAssignmentsForTransfer(BROKER_2,
+                Arrays.asList(BROKER_3), ImmutableSet.of(TOPIC));
         Assert.assertEquals(expected, actual);
     }
 

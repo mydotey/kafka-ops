@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -71,31 +72,39 @@ public class Brokers {
         return results;
     }
 
-    public Map<String, Map<Integer, List<Integer>>> generateAssignmentsForTransfer(int from, int to,
+    public Map<String, Map<Integer, List<Integer>>> generateAssignmentsForTransfer(int from, List<Integer> tos,
             Set<String> topics) {
         Map<String, Map<Integer, List<Integer>>> assignments = getAssignments(from, topics);
-        changeAssignmentsForTransfer(from, to, assignments);
+        changeAssignmentsForTransfer(from, tos, assignments);
         return assignments;
     }
 
-    public Map<String, Map<Integer, List<Integer>>> generateAssignmentsForTransfer(int from, int to, String topic,
-            Set<Integer> partitions) {
+    public Map<String, Map<Integer, List<Integer>>> generateAssignmentsForTransfer(int from, List<Integer> tos,
+            String topic, Set<Integer> partitions) {
         Map<String, Map<Integer, List<Integer>>> assignments = getAssignments(from, topic, partitions);
-        changeAssignmentsForTransfer(from, to, assignments);
+        changeAssignmentsForTransfer(from, tos, assignments);
         return assignments;
     }
 
-    protected void changeAssignmentsForTransfer(int from, int to,
+    protected void changeAssignmentsForTransfer(int from, List<Integer> tos,
             Map<String, Map<Integer, List<Integer>>> assignments) {
         assignments.forEach((t, a) -> {
             a.forEach((p, bl) -> {
-                if (bl.contains(to)) {
-                    String errorMessage = String.format(
-                            "to (broker: %s) has been in the assignment list for partition: {%s, %s}", to, t, p);
-                    throw new IllegalArgumentException(errorMessage);
-                }
+                AtomicBoolean reassignSuccess = new AtomicBoolean();
+                tos.forEach(to -> {
+                    if (bl.contains(to) || reassignSuccess.get())
+                        return;
 
-                bl.replaceAll(b -> b == from ? to : b);
+                    bl.replaceAll(b -> b == from ? to : b);
+                    reassignSuccess.set(true);
+                });
+
+                if (reassignSuccess.get())
+                    return;
+
+                String errorMessage = String
+                        .format("tos (brokers: %s) has been in the assignment list for partition: {%s, %s}", tos, t, p);
+                throw new IllegalArgumentException(errorMessage);
             });
         });
     }
